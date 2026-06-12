@@ -1,0 +1,81 @@
+name: authentik-ldap-outpost
+base: bare
+build-base: ubuntu@26.04
+version: "2026.5.3"
+summary: authentik LDAP outpost
+description: |
+  authentik is an open-source Identity Provider focused on flexibility and
+  versatility. This rock bundles the authentik LDAP outpost, which provides
+  an LDAP interface to the authentik identity provider.
+license: MIT
+
+run-user: _daemon_
+
+platforms:
+  amd64:
+
+services:
+  ldap:
+    override: replace
+    command: /ldap
+    startup: disabled
+    environment:
+      TMPDIR: /dev/shm/
+      GOFIPS: "1"
+
+parts:
+  # ── Runtime shared libraries (chisel slices) ────────────────────────────────
+  runtime-libs:
+    plugin: nil
+    stage-packages:
+      # /etc/os-release and distro identity files; creates /etc/ and /usr/lib/ dirs.
+      - base-files_release-info
+      # /etc/passwd and /etc/group from master files.
+      - base-passwd_data
+      # /etc/nsswitch.conf — needed by glibc hostname resolver.
+      - libc-bin_nsswitch
+      # glibc runtime required by the CGO-linked binary.
+      - libc6_libs
+
+  # ── Go binary: authentik LDAP outpost ─────────────────────────────────────
+  # CGO is required for GOFIPS140 support (uses Go's built-in FIPS module).
+  go-ldap:
+    plugin: go
+    permissions:
+      - path: etc/ssl/certs
+        owner: 584792
+        group: 584792
+        mode: "755"
+    source: https://github.com/goauthentik/authentik
+    source-type: git
+    source-tag: version/2026.5.3
+    source-depth: 1
+    build-snaps:
+      - go/1.26/stable
+    build-packages:
+      - gcc
+    build-environment:
+      - CGO_ENABLED: "1"
+      - GOFIPS140: "latest"
+    override-build: |
+      go mod download
+      go build -ldflags="-s -w" -o "${CRAFT_PART_INSTALL}/ldap" ./cmd/ldap
+    stage-packages:
+      # CA bundle for HTTPS connections to the authentik server.
+      - ca-certificates_data
+    stage:
+      - ldap
+      - etc/ssl/
+
+  # ── Security manifest (Canonical standard) ──────────────────────────────────
+  deb-security-manifest:
+    plugin: nil
+    after:
+      - runtime-libs
+    override-prime: |
+      set -x
+      mkdir -p $CRAFT_PRIME/usr/share/rocks/
+      (echo "# os-release" && cat /etc/os-release && echo "# dpkg-query" && \
+        dpkg-query --admindir=$CRAFT_PRIME/var/lib/dpkg/ \
+        -f '${db:Status-Abbrev},${binary:Package},${Version},${source:Package},${Source:Version}\n' \
+        -W) > $CRAFT_PRIME/usr/share/rocks/dpkg.query
