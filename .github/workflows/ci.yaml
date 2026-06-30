@@ -27,7 +27,7 @@ jobs:
       contents: read
     if: ${{ (github.ref == 'refs/heads/main') }}
     needs: build
-    uses: canonical/identity-team/.github/workflows/_rock-gh-publish-third-party.yaml@59d4d2782bcb8fc2deea2aa08442e4c8603f2689 # v1.11.2
+    uses: canonical/identity-team/.github/workflows/_rock-gh-publish-third-party.yaml@5830f3e6723de07cb5b7ccb6c84031d8b2964c62 # v1.11.4
     with:
       rock: ${{ needs.build.outputs.rock }}
   oci-publish:
