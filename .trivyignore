@@ -1,0 +1,5 @@
+# CVE-2024-42490: False positive/unfixable because main module uses git pseudo-version, but we are building 2026.5.3 which is newer than fixed version 2024.6.4
+CVE-2024-42490
+
+# CVE-2024-23647: False positive/unfixable because main module uses git pseudo-version, but we are building 2026.5.3 which is newer than fixed version 2023.10.7
+CVE-2024-23647
