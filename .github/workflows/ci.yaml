@@ -37,13 +37,13 @@ jobs:
     strategy:
       matrix:
         architecture: ${{ fromJson(needs.get-architectures.outputs.architectures) }}
-    uses: canonical/identity-team/.github/workflows/_rock-build.yaml@4d788b23e3fe1df0c3f86c2632a02a2754752487 # v1.14.0
+    uses: canonical/identity-team/.github/workflows/_rock-build.yaml@dcfe7ae33cc030ecf5d2ce8fecb857df3c90f7c8 # v1.14.1
     with:
       structure-tests-enabled: true
       architecture: ${{ matrix.architecture }}
 
   gh-publish:
-    uses: canonical/identity-team/.github/workflows/_rock-gh-publish.yaml@4d788b23e3fe1df0c3f86c2632a02a2754752487 # v1.14.0
+    uses: canonical/identity-team/.github/workflows/_rock-gh-publish.yaml@dcfe7ae33cc030ecf5d2ce8fecb857df3c90f7c8 # v1.14.1
     permissions:
       packages: write
       contents: read
@@ -55,7 +55,7 @@ jobs:
     # only release to oci-factory in case of release
     if: ${{ github.ref == 'refs/heads/main' }}
     needs: build
-    uses: canonical/identity-team/.github/workflows/_rock-oci-publish.yaml@4d788b23e3fe1df0c3f86c2632a02a2754752487 # v1.14.0
+    uses: canonical/identity-team/.github/workflows/_rock-oci-publish.yaml@dcfe7ae33cc030ecf5d2ce8fecb857df3c90f7c8 # v1.14.1
     with:
       edge-release: false
       eol-stable-release: "3 month"
@@ -70,7 +70,7 @@ jobs:
       actions: read
     if: ${{ (github.ref == 'refs/heads/main') || (github.ref_type == 'tag') }}
     needs: gh-publish
-    uses: canonical/identity-team/.github/workflows/_rock-scan.yaml@4d788b23e3fe1df0c3f86c2632a02a2754752487 # v1.14.0
+    uses: canonical/identity-team/.github/workflows/_rock-scan.yaml@dcfe7ae33cc030ecf5d2ce8fecb857df3c90f7c8 # v1.14.1
     with:
       image: ${{ needs.gh-publish.outputs.image }}
 
@@ -80,7 +80,7 @@ jobs:
       pull-requests: write
     needs: [gh-publish, scan]
     if: github.ref_type == 'tag'
-    uses: canonical/identity-team/.github/workflows/oci-update-pr.yaml@4d788b23e3fe1df0c3f86c2632a02a2754752487 # v1.14.0
+    uses: canonical/identity-team/.github/workflows/oci-update-pr.yaml@dcfe7ae33cc030ecf5d2ce8fecb857df3c90f7c8 # v1.14.1
     with:
         oci-image: ${{ needs.gh-publish.outputs.image }}
         repository: canonical/authentik-ldap-outpost-operator
