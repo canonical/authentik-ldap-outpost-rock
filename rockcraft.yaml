@@ -60,7 +60,8 @@ parts:
       - GOFIPS140: "latest"
     override-build: |
       go get golang.org/x/crypto@v0.52.0
-      go get golang.org/x/net@v0.55.0
+      go get golang.org/x/net@v0.56.0
+      go get golang.org/x/text@v0.39.0
       go mod tidy
       go mod download
       GOARCH="${CRAFT_ARCH_BUILD_FOR}" go build -ldflags="-s -w" -o "${CRAFT_PART_INSTALL}/ldap" ./cmd/ldap
