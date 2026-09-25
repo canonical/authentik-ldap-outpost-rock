@@ -49,8 +49,6 @@ jobs:
       contents: read
     if: ${{ (github.ref == 'refs/heads/main') }}
     needs: build
-    with:
-      rock: ${{ needs.build.outputs.rock }}
   oci-publish:
     # only release to oci-factory in case of release
     if: ${{ github.ref == 'refs/heads/main' }}
