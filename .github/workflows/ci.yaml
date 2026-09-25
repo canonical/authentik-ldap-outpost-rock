@@ -43,7 +43,7 @@ jobs:
       architecture: ${{ matrix.architecture }}
 
   gh-publish:
-    uses: canonical/identity-team/.github/workflows/_rock-gh-publish.yaml@fc85af7448538c473be450dc2c8ec5d158ea0d15 # v1.17.0
+    uses: canonical/identity-team/.github/workflows/_rock-gh-publish-third-party.yaml@fc85af7448538c473be450dc2c8ec5d158ea0d15 # v1.17.0
     permissions:
       packages: write
       contents: read
