@@ -1,0 +1,28 @@
+# Configuration for canonical/identity-team upstream-upgrade workflows.
+# Upstream repository, tag prefix, and rock image are auto-detected from rockcraft.yaml.
+
+release_notes_path: website/docs/releases/{year}/v{year}.{minor}.mdx
+enforce_sequential_series: true
+
+diffed_files:
+  - cmd/ldap/Dockerfile
+  - cmd/ldap/main.go
+
+trusted_link_hosts:
+  - docs.goauthentik.io
+
+charms:
+  - key: ldap-outpost
+    repo: canonical/authentik-ldap-outpost-operator
+    description: >-
+      Deploys the authentik LDAP outpost and connects it to an authentik
+      server provider and TLS certificates.
+    files:
+      - charmcraft.yaml
+      - src/api_client.py
+      - src/charm.py
+      - src/configs.py
+      - src/constants.py
+      - src/env_vars.py
+      - src/integrations.py
+      - src/services.py
